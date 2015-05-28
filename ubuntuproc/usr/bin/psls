@@ -1,0 +1,15 @@
+#!/bin/sh
+## Usage: psls [proc keyword]
+__psls() {
+    if [ $# -lt 1 ]; then
+        local pat=""
+        ps -e -o pid,uname,comm,pcpu,pmem,etime,cmd --sort=-pcpu,-pmem | sed -n '1,20p' 2>/dev/null | sed -e '/ ps /d;/ sed /d;/ psls /d;' 2>/dev/null
+    else
+        local pat="$(echo "$@" | sed -e 's/[]\/$*.^|[]/\\&/g')"
+        ps -e -o pid,uname,comm,pcpu,pmem,etime,cmd --sort=-pcpu,-pmem | tee > head -1 | sed -e "/${pat}/!d;/ ps /d;/ sed /d;/ psls /d;" 2>/dev/null
+    fi
+}
+
+__psls $@
+
+unset -f __psls

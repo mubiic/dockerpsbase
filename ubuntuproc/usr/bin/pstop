@@ -1,0 +1,33 @@
+#!/bin/sh
+## Usage: pstop [refresh timeout in miliseconds]
+__pstop() {
+    if [ $# -lt 1 ]; then
+        local secs=0
+    else
+        local secs="$(echo $1 | tr -cd '[:digit:]')"
+        [ -z $secs ] && secs=0
+    fi
+    echo
+    echo "Usage: pstop [x]    where x means refresh timeout in x miliseconds whose value"
+    echo "is a integer digit like 0, 1, 60 etc and 0 means no repeat output.(default x=0)"
+    echo
+    orig_stty_setting="$(stty -g)"
+    local keypress=""
+    while ! echo "$keypress" | grep -iq Q; do
+        stty -echo -icanon -icrnl time ${secs} min 0
+        ps -e -o pid,uname,comm,cmd,pcpu,pmem --sort=-pcpu,-pmem | sed -n "1,20p" 2>/dev/null | sed -e '/ ps /d;/ sed /d;/ pstop /d;' 2>/dev/null
+        if [ ${secs} -eq 0 ]; then
+            keypress='Q'
+            echo
+        else
+            echo "[$(date '+%F:%S')]Press Q/q key to quit Or any other key to refresh..."
+            echo
+            keypress="$(dd bs=1 count=1 2>/dev/null)"
+        fi
+    done
+    stty "$orig_stty_setting"
+}
+
+__pstop $@
+
+unset -f __pstop

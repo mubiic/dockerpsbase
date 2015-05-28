@@ -1,0 +1,4 @@
+#!/bin/sh
+echo "Start running crontab service ... ..." >&2
+exec /usr/sbin/crond -f
+echo "Finish running crontab service ... ..." >&2
