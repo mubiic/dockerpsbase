@@ -2,15 +2,15 @@ FROM            mubiic/alpinebash:3.2
 MAINTAINER      Howard Mei      <howardmei@mubiic.com>
 ENV             KUBECONF        **TBD**
 ENV             APPCONF         **TBD**
-ENV             S6VER           v1.A1.2
-ENV             BUILDTAG        alpineproc:3.2/r20150528/sg/A
+ENV             S6VER           v1.A2.1
+ENV             BUILDTAG        alpineproc:3.2/r20150612/sg/A
 
 # Add conf to fix s6 init suite permissions
 COPY            etc             /etc
 COPY            usr             /usr
 
 # TODO: Remove sudo package in proc image, use /usr/bin/gosu instead for better security
-RUN             NewPackages="bind-tools procps psmisc@testing gettext" && \
+RUN             NewPackages="bind-tools inotify-tools procps psmisc@testing gettext" && \
                 apk update && apk add --update ${NewPackages} && \
                 printf "\\n%s \\n%s \\n%s \\n%s \\n" "# Build Layer 3 Meta Info" \
                 "Package ++: [s6-overlay-${S6VER}] ${NewPackages}" \

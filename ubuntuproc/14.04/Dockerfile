@@ -2,15 +2,15 @@ FROM            mubiic/ubuntubash:14.04
 MAINTAINER      Howard Mei      <howardmei@mubiic.com>
 ENV             KUBECONF        **TBD**
 ENV             APPCONF         **TBD**
-ENV             S6VER           v1.A1.2
-ENV             BUILDTAG        ubuntuproc:14.04/r20150528/sg/A
+ENV             S6VER           v1.A2.1
+ENV             BUILDTAG        ubuntuproc:14.04/r20150612/sg/A
 
 # Add conf to fix s6 init suite permissions
 COPY            etc             /etc
 COPY            usr             /usr
 
 # Update the timezone and locale according to the env variables set above
-RUN             NewPackages="libapparmor1 cron procps psmisc gettext-base" && DEBIAN_FRONTEND=noninteractive && \
+RUN             NewPackages="libapparmor1 cron inotify-tools procps psmisc gettext-base" && DEBIAN_FRONTEND=noninteractive && \
                 apt-get-min update && apt-install-min ${NewPackages} && apt-cleanup-min && \
                 printf "\\n%s \\n%s \\n%s \\n%s \\n" "# Build Layer 3 Meta Info" \
                 "Package ++: [s6-overlay-${S6VER}] ${NewPackages}" \
